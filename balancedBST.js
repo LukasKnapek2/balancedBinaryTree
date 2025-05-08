@@ -1,3 +1,5 @@
+module.exports = { treeFactory };
+
 function nodeFactory(data) {
   return {
     data: data,
@@ -216,4 +218,30 @@ function treeFactory(array) {
     }
     return isBalanced(node.left) && isBalanced(node.right);
   }
+  function rebalance(node) {
+    let sortedArray = []
+    function pushSortedArray(node) {sortedArray.push(node.data)}
+    inOrderTraversal(node, pushSortedArray)
+    return buildTree(sortedArray)
+  }
+  return {
+    root,
+    prettyPrint: () => prettyPrint(root),
+    insert: (value) => root = insert(root, value),
+    deleteNode: (value) => root = deleteNode(root, value),
+    find: (value) => find(root, value),
+    levelOrder: (callback) => levelOrder(root, callback),
+    levelOrderRecursive: (callback) => levelOrderRecursive(root, callback),
+    getHeight: () => getHeight(root),
+    preOrder: (callback) => preOrderTraversal(root, callback),
+    preOrderRecursive: (callback) => preOrderTraversalRecursive(root, callback),
+    inOrder: (callback) => inOrderTraversal(root, callback),
+    postOrder: (callback) => postOrderTraversal(root, callback),
+    depth: (value) => depth(root, value),
+    isBalanced: () => isBalanced(root),
+    rebalance: () => {
+      root = rebalance(root);
+    },
+  };
+  
 }
