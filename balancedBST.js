@@ -82,15 +82,15 @@ function treeFactory(array) {
   }
 
   function find(node, value) {
-    if(node === null) return null
-    if(node.data === value) {
-      return node
+    if (node === null) return null;
+    if (node.data === value) {
+      return node;
     }
-    if(node.data > value) {
-      return find(node.left, value)
+    if (node.data > value) {
+      return find(node.left, value);
     }
-    if(node.data < value) {
-      return find(node.right, value)
+    if (node.data < value) {
+      return find(node.right, value);
     }
   }
 
@@ -98,19 +98,18 @@ function treeFactory(array) {
     if (typeof callback !== "function") {
       throw new Error("A valid callback function must be provided");
     }
-  
-    const queue = [];
-    queue.push(node)
-    while(queue.length !== 0) {
-      let currentNode = queue.shift()
-      callback(currentNode)
-      if(currentNode.left !== null) {
-        queue.push(currentNode.left)
-      }
-      if(currentNode.right !== null) {
-        queue.push(currentNode.right)
-      }
 
+    const queue = [];
+    queue.push(node);
+    while (queue.length !== 0) {
+      let currentNode = queue.shift();
+      callback(currentNode);
+      if (currentNode.left !== null) {
+        queue.push(currentNode.left);
+      }
+      if (currentNode.right !== null) {
+        queue.push(currentNode.right);
+      }
     }
   }
 
@@ -118,58 +117,103 @@ function treeFactory(array) {
     if (typeof callback !== "function") {
       throw new Error("A valid callback function must be provided");
     }
-    const height = getHeight(node)
-    for(let level = 1; level <= height; level++) {
-      processLevel(node, level, callback)
+    const height = getHeight(node);
+    for (let level = 1; level <= height; level++) {
+      processLevel(node, level, callback);
     }
     function processLevel(node, level, callback) {
-      if(node === null) {return}
-
-      if(level === 1) {
-        callback(node)
+      if (node === null) {
+        return;
       }
-      else {
-        processLevel(node.left, level - 1, callback)
-        processLevel(node.right, level - 1, callback)
+
+      if (level === 1) {
+        callback(node);
+      } else {
+        processLevel(node.left, level - 1, callback);
+        processLevel(node.right, level - 1, callback);
       }
     }
-
   }
 
   function getHeight(node) {
-    if(node === null) {
-      return 0
+    if (node === null) {
+      return 0;
     }
-    let leftHeight = getHeight(node.left)
-    let rightHeight = getHeight(node.right)
-    return 1 + Math.max(leftHeight, rightHeight)
+    let leftHeight = getHeight(node.left);
+    let rightHeight = getHeight(node.right);
+    return 1 + Math.max(leftHeight, rightHeight);
   }
 
   function preOrderTraversal(node, callback) {
     if (typeof callback !== "function") {
       throw new Error("A valid callback function must be provided");
     }
-  
-    const queueLeft = [];
-    const queueRight = [];
-    queueLeft.push(node)
-    while(queueLeft.length !== 0 || queueRight.length !== 0) {
-      let currentNode
-      if(queueLeft.length > 0) {
-        currentNode = queueLeft.shift()
+    const stack = [node];
+    let currentNode;
+    while (stack.length !== 0) {
+      currentNode = stack.pop();
+      callback(currentNode);
+      if (currentNode.right !== null) {
+        stack.push(currentNode.right);
       }
-      else{
-        currentNode = queueRight.shift()
+      if (currentNode.left !== null) {
+        stack.push(currentNode.left);
       }
-      callback(currentNode)
-      if(currentNode.left !== null) {
-        queueLeft.push(currentNode.left)
-      }
-      if(currentNode.right !== null || currentNode !== node) {
-        queueRight.push(currentNode.right)
-      }
-
     }
   }
 
+  function preOrderTraversalRecursive(node, callback) {
+    if (typeof callback !== "function") {
+      throw new Error("A valid callback function must be provided");
+    }
+    if (node === null) {
+      return;
+    }
+    callback(node);
+    preOrderTraversalRecursive(node.left, callback);
+    preOrderTraversalRecursive(node.right, callback);
+  }
+
+  function inOrderTraversal(node, callback) {
+    if (typeof callback !== "function") {
+      throw new Error("A valid callback function must be provided");
+    }
+    if (node === null) return;
+
+    inOrderTraversal(node.left, callback);
+    callback(node);
+    inOrderTraversal(node.right, callback);
+  }
+  function postOrderTraversal(node, callback) {
+    if (typeof callback !== "function") {
+      throw new Error("A valid callback function must be provided");
+    }
+    if (node === null) return;
+
+    postOrderTraversal(node.left, callback);
+    postOrderTraversal(node.right, callback);
+    callback(node);
+  }
+
+  function depth(node, value) {
+    if (node === null) return -1;
+    if (node.value === value) return 0;
+    let leftDepth = depth(node.left, value);
+    if (leftDepth !== -1) {
+      return leftDepth + 1;
+    }
+    let rightDepth = depth(node.right, value);
+    if (rightDepth !== -1) {
+      return rightDepth + 1;
+    }
+
+    return -1;
+  }
+  function isBalanced(node) {
+    if (node === null) return true;
+    if (Math.abs(getHeight(node.left) - getHeight(node.right)) > 1) {
+      return false;
+    }
+    return isBalanced(node.left) && isBalanced(node.right);
+  }
 }
